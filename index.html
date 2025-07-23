@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Saurabh Kumar - Frontend Developer</title>
+    <title>Saurabh Kumar - Developer</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome -->
@@ -22,6 +22,41 @@
         .mobile-menu {
             transition: transform 0.3s ease-in-out;
         }
+        /* Waving hand animation */
+        @keyframes wave {
+            0% { transform: rotate(0deg); }
+            10% { transform: rotate(14deg); }
+            20% { transform: rotate(-8deg); }
+            30% { transform: rotate(14deg); }
+            40% { transform: rotate(-4deg); }
+            50% { transform: rotate(10deg); }
+            60% { transform: rotate(0deg); }
+            100% { transform: rotate(0deg); }
+        }
+        .waving-hand {
+            display: inline-block;
+            animation: wave 2.5s infinite;
+            transform-origin: 70% 70%;
+        }
+        /* Floating code symbols */
+        .code-symbol {
+            position: absolute;
+            color: rgba(59, 130, 246, 0.4);
+            font-family: monospace;
+            pointer-events: none;
+            animation: float-up 3s ease-out forwards;
+        }
+
+        @keyframes float-up {
+            0% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px);
+                opacity: 0;
+            }
+        }
     </style>
 </head>
 <body class="bg-gray-50">
@@ -29,7 +64,7 @@
     <nav class="bg-white shadow-lg fixed w-full top-0 z-50">
         <div class="container mx-auto px-4">
             <div class="flex justify-between items-center py-4">
-                <a href="#" class="text-2xl font-bold text-gray-800 font-mono">&lt;SK/&gt;</a>
+                <a href="#" class="text-2xl text-gray-800 font-mono">&lt;SK/&gt;</a>
                 <!-- Desktop Menu -->
                 <div class="hidden md:flex items-center space-x-8">
                     <a href="#about" class="text-gray-600 hover:text-blue-600 transition duration-300">About</a>
@@ -63,21 +98,21 @@
     </nav>
 
     <!-- Hero Section -->
-    <section class="pt-24 bg-white">
+    <section class="pt-24 hero-section">
         <div class="container mx-auto px-4 py-16 md:py-24">
             <div class="flex flex-col md:flex-row items-center justify-between">
-                <div class="max-w-xl text-center md:text-left">
-                    <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold text-gray-800 mb-4" data-aos="fade-right">Saurabh Kumar</h1>
-                    <p class="text-lg sm:text-xl md:text-2xl text-blue-600 font-semibold mb-6" data-aos="fade-right" data-aos-delay="100">Seasoned Frontend Developer</p>
-                    <p class="text-gray-600 mb-8 max-w-lg" data-aos="fade-right" data-aos-delay="200">
-                        With over four years of experience, I specialize in crafting production-level, pixel-perfect code and optimizing high-performance web applications.
-                    </p>
+                <div class="max-w-xl text-center sm:text-left">
+                    <h3 class="text-xl sm:text-3xl font-bold text-gray-800 mb-4" data-aos="fade-right">
+                        <span class="waving-hand">👋</span> I'm Saurabh.
+                    </h3>
+                    <p class="text-lg sm:text-l md:text-xl text-grey-600 font-semibold mb-4 ml-8" data-aos="fade-right" data-aos-delay="100">I am a <span>Software Developer</span></p>
+                    <p class="text-md sm:text-s mb-12 ">I am MERN stack developer who can help you build your product from ground up.</p>
                     <a href="#contact" class="bg-blue-600 text-white px-8 py-3 rounded-full font-semibold hover:bg-blue-700 transition duration-300" data-aos="fade-up" data-aos-delay="300">Get in Touch</a>
                 </div>
                  <!-- Image/Icon -->
                 <div class="mt-12 md:mt-0" data-aos="fade-left" data-aos-delay="400">
                     <div class="w-64 h-64 sm:w-72 sm:h-72 lg:w-96 lg:h-96 bg-gradient-to-br from-blue-500 to-cyan-400 rounded-full flex items-center justify-center shadow-2xl">
-                        <i class="fas fa-code text-6xl sm:text-8xl text-white"></i>
+                        <img src="/assests/profile.jpg" alt="Saurabh Kumar" class="rounded-full w-60 h-60 sm:w-56 sm:h-56 lg:w-80 lg:h-80 object-cover">
                     </div>
                 </div>
             </div>
@@ -264,6 +299,106 @@
                 mobileMenu.classList.add('hidden');
             });
         }
+    </script>
+
+    <!-- Add this script at the end of the body -->
+    <script>
+        // Array of code symbols
+        const symbols = ['{', '}', '[', ']', '<', '>', '/', '(', ')', ';', '='];
+        
+        // Array of colors that match the portfolio theme
+        const colors = [
+            // Blues
+            '#3B82F6', // blue-500
+            '#2563EB', // blue-600
+            '#1D4ED8', // blue-700
+            // Cyans
+            '#06B6D4', // cyan-500
+            '#0891B2', // cyan-600
+            // Reds
+            '#EF4444', // red-500
+            '#DC2626', // red-600
+            // Oranges
+            '#F97316', // orange-500
+            '#EA580C', // orange-600
+            '#8B5CF6', // violet-500
+            '#10B981', // emerald-500
+        ];
+
+        // Function to get random position within radius
+        function getRandomPosition(centerX, centerY, radius) {
+            const angle = Math.random() * 2 * Math.PI;
+            const r = Math.sqrt(Math.random()) * radius; // Square root for uniform distribution
+            return {
+                x: centerX + r * Math.cos(angle),
+                y: centerY + r * Math.sin(angle)
+            };
+        }
+
+        // Function to create a code symbol at specific coordinates
+        function createCodeSymbol(x, y) {
+            const heroSection = document.querySelector('.hero-section');
+            const heroRect = heroSection.getBoundingClientRect();
+            
+            // Create random position within 100px radius of the cursor
+            const pos = getRandomPosition(x - heroRect.left, y - heroRect.top, 100);
+            
+            // Only create symbol if position is within hero section
+            if (pos.x >= 0 && pos.x <= heroRect.width && pos.y >= 0 && pos.y <= heroRect.height) {
+                const symbol = document.createElement('div');
+                symbol.className = 'code-symbol text-2xl';
+                symbol.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+                
+                // Set position
+                symbol.style.left = pos.x + 'px';
+                symbol.style.top = pos.y + 'px';
+                
+                // Random color from our color array
+                const randomColor = colors[Math.floor(Math.random() * colors.length)];
+                symbol.style.color = randomColor;
+                
+                // Add to hero section
+                heroSection.appendChild(symbol);
+                
+                // Remove the symbol after animation completes
+                setTimeout(() => {
+                    symbol.remove();
+                }, 3000);
+            }
+        }
+
+        // Handle mouse movement
+        let throttleTimer;
+        const heroSection = document.querySelector('.hero-section');
+        
+        heroSection.addEventListener('mousemove', (e) => {
+            // Throttle the symbol creation to every 100ms
+            if (!throttleTimer) {
+                throttleTimer = setTimeout(() => {
+                    throttleTimer = null;
+                    // Create 2-4 symbols at each mouse position
+                    const numSymbols = Math.floor(Math.random() * 2) + 1;
+                    for (let i = 0; i < numSymbols; i++) {
+                        createCodeSymbol(e.clientX, e.clientY);
+                    }
+                }, 200);
+            }
+        });
+
+        // Handle touch events
+        heroSection.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            if (!throttleTimer) {
+                throttleTimer = setTimeout(() => {
+                    throttleTimer = null;
+                    const touch = e.touches[0];
+                    const numSymbols = Math.floor(Math.random() * 3) + 2;
+                    for (let i = 0; i < numSymbols; i++) {
+                        createCodeSymbol(touch.clientX, touch.clientY);
+                    }
+                }, 100);
+            }
+        }, { passive: false });
     </script>
 </body>
 </html>

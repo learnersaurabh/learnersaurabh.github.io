@@ -325,23 +325,33 @@
             '#10B981', // emerald-500
         ];
 
-        // Function to get random position within radius
-        function getRandomPosition(centerX, centerY, radius) {
+        // Function to get random position within section
+        function getRandomPositionInSection(heroRect) {
+            return {
+                x: Math.random() * heroRect.width,
+                y: Math.random() * heroRect.height
+            };
+        }
+
+        // Function to get random position around point
+        function getRandomPositionAroundPoint(centerX, centerY, radius) {
             const angle = Math.random() * 2 * Math.PI;
-            const r = Math.sqrt(Math.random()) * radius; // Square root for uniform distribution
+            const r = Math.sqrt(Math.random()) * radius;
             return {
                 x: centerX + r * Math.cos(angle),
                 y: centerY + r * Math.sin(angle)
             };
         }
 
-        // Function to create a code symbol at specific coordinates
-        function createCodeSymbol(x, y) {
+        // Function to create a code symbol
+        function createCodeSymbol(x, y, isRandom = false) {
             const heroSection = document.querySelector('.hero-section');
             const heroRect = heroSection.getBoundingClientRect();
             
-            // Create random position within 100px radius of the cursor
-            const pos = getRandomPosition(x - heroRect.left, y - heroRect.top, 100);
+            // Get position based on whether it's random or cursor-based
+            const pos = isRandom ? 
+                getRandomPositionInSection(heroRect) : 
+                getRandomPositionAroundPoint(x - heroRect.left, y - heroRect.top, 100);
             
             // Only create symbol if position is within hero section
             if (pos.x >= 0 && pos.x <= heroRect.width && pos.y >= 0 && pos.y <= heroRect.height) {
@@ -367,38 +377,44 @@
             }
         }
 
-        // Handle mouse movement
+        // Function to handle mobile animation
+        function startMobileAnimation() {
+            const numSymbols = Math.floor(Math.random() * 3) + 1;
+            for (let i = 0; i < numSymbols; i++) {
+                createCodeSymbol(0, 0, true);
+            }
+        }
+
+        // Handle desktop vs mobile
         let throttleTimer;
+        let mobileAnimationInterval;
         const heroSection = document.querySelector('.hero-section');
-        
-        heroSection.addEventListener('mousemove', (e) => {
-            // Throttle the symbol creation to every 100ms
-            if (!throttleTimer) {
-                throttleTimer = setTimeout(() => {
-                    throttleTimer = null;
-                    // Create 2-4 symbols at each mouse position
-                    const numSymbols = Math.floor(Math.random() * 2) + 1;
-                    for (let i = 0; i < numSymbols; i++) {
-                        createCodeSymbol(e.clientX, e.clientY);
-                    }
-                }, 200);
+        const isMobile = window.matchMedia("(max-width: 768px)").matches;
+
+        if (isMobile) {
+            // Start random symbol generation for mobile
+            mobileAnimationInterval = setInterval(startMobileAnimation, Math.random() * 4000 + 1500);
+        } else {
+            // Desktop mouse movement handler
+            heroSection.addEventListener('mousemove', (e) => {
+                if (!throttleTimer) {
+                    throttleTimer = setTimeout(() => {
+                        throttleTimer = null;
+                        const numSymbols = Math.floor(Math.random() * 2) + 1;
+                        for (let i = 0; i < numSymbols; i++) {
+                            createCodeSymbol(e.clientX, e.clientY, false);
+                        }
+                    }, 200);
+                }
+            });
+        }
+
+        // Clean up interval when leaving the page
+        window.addEventListener('unload', () => {
+            if (mobileAnimationInterval) {
+                clearInterval(mobileAnimationInterval);
             }
         });
-
-        // Handle touch events
-        heroSection.addEventListener('touchmove', (e) => {
-            e.preventDefault();
-            if (!throttleTimer) {
-                throttleTimer = setTimeout(() => {
-                    throttleTimer = null;
-                    const touch = e.touches[0];
-                    const numSymbols = Math.floor(Math.random() * 3) + 2;
-                    for (let i = 0; i < numSymbols; i++) {
-                        createCodeSymbol(touch.clientX, touch.clientY);
-                    }
-                }, 100);
-            }
-        }, { passive: false });
     </script>
 </body>
 </html>
